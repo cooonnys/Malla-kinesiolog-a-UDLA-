@@ -1,1 +1,83 @@
+const courses = [
+  { name: "Morfología y función I", code: "MYF101", prereq: [] },
+  { name: "Fundamento físico matemático", code: "MAT117", prereq: [] },
+  { name: "Biología celular e histología", code: "CBI102", prereq: [] },
+  { name: "Fundamentos de la kinesiología", code: "KIN102", prereq: [] },
+  { name: "Inglés I", code: "LCE0016", prereq: [] },
+  { name: "Morfología y función II", code: "MYF201", prereq: ["MYF101"] },
+  { name: "Biofísica", code: "FIS401", prereq: ["MAT117"] },
+  { name: "Química y bioquímica", code: "CQU202", prereq: [] },
+  { name: "Comunicación científica", code: "KIN208", prereq: [] },
+  { name: "Actividad física y salud", code: "KIN204", prereq: [] },
+  { name: "Inglés II", code: "LCE0026", prereq: [] },
+  { name: "Bases del movimiento", code: "KIN305", prereq: ["MYF201", "FIS401"] },
+  { name: "Bioestadística", code: "AES519", prereq: ["MAT117"] },
+  { name: "Fisiología general", code: "MYF302", prereq: ["MYF101", "KIN102"] },
+  { name: "Kinesiología basada en evidencia", code: "KIN303", prereq: ["KIN102", "KIN208"] },
+  { name: "Fisio/psico curso de vida I", code: "KIN207", prereq: ["KIN204"] },
+  { name: "Actuar comunitario", code: "LIC001", prereq: [] },
+  { name: "Análisis del movimiento", code: "KIN591", prereq: ["KIN305"] },
+  { name: "Aprendizaje motor", code: "KIN409", prereq: ["MYF302"] },
+  { name: "Fisiología del ejercicio", code: "KIN410", prereq: ["KIN204", "MYF302"] },
+  { name: "Fisiopatología", code: "KIN412", prereq: ["MYF302", "CQU202"] },
+  { name: "Curso de vida II", code: "KIN408", prereq: ["KIN208"] },
+  { name: "Ética comunitaria", code: "LIC002", prereq: ["LIC001"] },
+  { name: "Disf. neuromusculoesquelética", code: "KIN508", prereq: ["KIN591"] },
+  { name: "Disfunción cardiorrespiratoria", code: "KIN494", prereq: ["KIN412", "MYF302"] },
+  { name: "Farmacología", code: "KIN509", prereq: ["KIN412", "MYF302"] },
+  { name: "Gestión en salud", code: "KIN600", prereq: ["AES519"] },
+  { name: "Práctica I", code: "KIN510", prereq: ["KIN408", "KIN410"] },
+  { name: "Salud pública", code: "LIC003", prereq: ["LIC002"] },
+  { name: "Evaluación musculoesquelética", code: "KIN607", prereq: ["KIN508"] },
+  { name: "Evaluación cardiorrespiratoria", code: "KIN615", prereq: ["KIN494"] },
+  { name: "Ergonomía", code: "KIN503", prereq: ["LIC003", "KIN591"] },
+  { name: "Metodología investigación", code: "KIN719", prereq: ["KIN600", "KIN303"] },
+  { name: "Práctica II", code: "KIN720", prereq: ["KIN494"] },
+  { name: "Métodos participativos", code: "LIC004", prereq: ["LIC003"] },
+  { name: "Intervención I", code: "KIN723", prereq: ["KIN508"] },
+  { name: "Intervención respiratoria", code: "KIN721", prereq: ["KIN615"] },
+  { name: "Agentes físicos", code: "KIN211", prereq: ["KIN508", "KIN303"] },
+  { name: "Seminario grado I", code: "KIN001", prereq: ["KIN719"] },
+  { name: "Práctica III", code: "KIN812", prereq: ["KIN720", "KIN508"] },
+  { name: "Taller comunitario I", code: "LIC005", prereq: ["LIC004"] },
+  { name: "Intervención II", code: "KIN823", prereq: ["KIN723"] },
+  { name: "Cardiometabólica", code: "KIN718", prereq: ["KIN615", "KIN410"] },
+  { name: "Geriatría", code: "KIN505", prereq: ["KIN412"] },
+  { name: "Seminario grado II", code: "KIN817", prereq: ["KIN001"] },
+  { name: "Práctica IV", code: "KIN315", prereq: ["KIN812"] },
+  { name: "Taller comunitario II", code: "LIC006", prereq: ["LIC005"] }
+];
 
+let completed = new Set();
+
+function isUnlocked(course) {
+  return course.prereq.every(code => completed.has(code));
+}
+
+function render() {
+  const container = document.getElementById('grid-container');
+  container.innerHTML = '';
+
+  courses.forEach(course => {
+    const div = document.createElement('div');
+    div.className = 'course';
+    div.innerHTML = `<strong>${course.code}</strong><br>${course.name}`;
+
+    if (completed.has(course.code)) {
+      div.classList.add('completed');
+    } else if (!isUnlocked(course)) {
+      div.classList.add('locked');
+    }
+
+    div.addEventListener('click', () => {
+      if (isUnlocked(course) && !completed.has(course.code)) {
+        completed.add(course.code);
+        render(); // re-render to unlock new courses
+      }
+    });
+
+    container.appendChild(div);
+  });
+}
+
+render();
